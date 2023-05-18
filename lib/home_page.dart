@@ -7,6 +7,8 @@ import 'package:uteeth_socorrista/preview_page.dart';
 import 'package:uteeth_socorrista/widgets/anexo.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,6 +22,7 @@ class _HomePageState extends State<HomePage> {
   File? arquivo;
   final picker = ImagePicker();
   final FirebaseStorage storage = FirebaseStorage.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future getFileFromGallery() async {
     PickedFile? file = await picker.getImage(source: ImageSource.gallery);
@@ -38,16 +41,33 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future sendFileToFirestore(File? arquivo) async {
+  Future<void> sendFileToFirestore(File? arquivo) async {
 
     try {
       String ref = "images/img-${DateTime.now().toString()}.jpg";
-      await storage.ref(ref).putFile(arquivo!);
-      const snackBar = SnackBar(
-          content: Text('Arquivo enviado'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      var result = await storage.ref(ref).putFile(arquivo!);
+
+      FirebaseFunctions functions = FirebaseFunctions.instance;
+
+      CollectionReference chamado = FirebaseFirestore.instance.collection('Chamados');
+
+      await chamado.add({
+        'uidSocorrista': 'uidSocorrista',
+        'imagePath': result.ref.fullPath
+      }).then((value) async {
+        HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('onEmergencyCreated');
+        final cResponse = await callable.call(
+        {"data": value.id});
+        print(cResponse.data);
+        const snackBar = SnackBar(
+            content: Text("Chamado criado."));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        });
     } on FirebaseException catch (e) {
-      throw Exception("erro no upload da imagem: ${e.code}");
+      const snackBar = SnackBar(
+          content: Text("Erro ao criar chamado"));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      throw Exception("erro ao criar chamado: ${e}");
     }
   }
 

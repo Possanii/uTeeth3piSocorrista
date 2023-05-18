@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:uteeth_socorrista/home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
+// Import the firebase_app_check plugin
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -10,7 +12,15 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  await FirebaseAppCheck.instance.activate(
+      webRecaptchaSiteKey: 'recaptcha-v3-site-key',
+      // Default provider for Android is the Play Integrity provider. You can use the "AndroidProvider" enum to choose
+      // your preferred provider. Choose from:
+      // 1. debug provider
+      // 2. safety net provider
+      // 3. play integrity provider
+      androidProvider: AndroidProvider.debug,
+  );
   runApp(const MyApp());
 }
 
