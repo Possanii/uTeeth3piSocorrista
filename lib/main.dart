@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:uteeth_socorrista/home_page.dart';
+import 'package:uteeth_socorrista/pages/home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 // Import the firebase_app_check plugin
 import 'package:firebase_app_check/firebase_app_check.dart';
