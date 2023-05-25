@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -47,10 +48,12 @@ class _EmergencyFormPageState extends State<EmergencyFormPage> {
 
       await chamado.add({
         'uidSocorrista': userCredential.user?.uid,
-        'nome': name,
-        'telefone': phone,
+        'name': name,
+        'phone': phone,
         'fcmTokenSocorrista': fcmToken,
         'status': 'open',
+        'socorristaAccept': false,
+        'emergencyAcceptBy': {},
       }).then((value) async {
         upload(value.id);
         uno.post("https://southamerica-east1-uteeth-3pi-puc.cloudfunctions.net/onEmergencyCreated", data: {"data": value.id});
