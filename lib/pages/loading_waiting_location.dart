@@ -1,33 +1,28 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:uteeth_socorrista/pages/emergency_accept.dart';
+import 'package:uteeth_socorrista/pages/location_page.dart';
 
-class LoadingPage extends StatefulWidget {
+class LoadingWaitingLocation extends StatefulWidget {
   var id;
-  var name;
 
-  LoadingPage({Key? key, required this.id, required this.name})
-      : super(key: key);
+  LoadingWaitingLocation({Key? key, required this.id}) : super(key: key);
 
   @override
-  State<LoadingPage> createState() => _LoadingPageState();
+  State<LoadingWaitingLocation> createState() => _LoadingWaitingLocationState();
 }
 
-class _LoadingPageState extends State<LoadingPage> {
-  goToAccept() {
+class _LoadingWaitingLocationState extends State<LoadingWaitingLocation> {
+  goToAccept(id) {
     Timer(
         Duration(seconds: 5),
         () => Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (_) =>
-                    EmergencyAccept(id: widget.id, name: widget.name))));
+            context, MaterialPageRoute(builder: (_) => LocationPage(id: id))));
   }
 
   @override
   Widget build(BuildContext context) {
-    goToAccept();
+    goToAccept(widget.id);
 
     return const Scaffold(
       backgroundColor: Colors.white,
@@ -38,7 +33,7 @@ class _LoadingPageState extends State<LoadingPage> {
             CircularProgressIndicator(), // Indicador de carregamento circular
             SizedBox(height: 20), // Espaçamento entre o indicador e o texto
             Text(
-              'Encontrando Dentistas...',
+              'Aguardando localização...',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,

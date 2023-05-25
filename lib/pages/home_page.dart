@@ -1,13 +1,11 @@
 import 'dart:io';
-import 'dart:ui';
 
-import 'package:flutter/material.dart';
 import 'package:camera_camera/camera_camera.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:uteeth_socorrista/pages/emergency_form_page.dart';
 import 'package:uteeth_socorrista/pages/preview_page.dart';
 import 'package:uteeth_socorrista/widgets/anexo.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:get/get.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -18,15 +16,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   File? arquivo;
-  final picker = ImagePicker();
-
-  Future getFileFromGallery() async {
-    PickedFile? file = await picker.getImage(source: ImageSource.gallery);
-
-    if (file != null) {
-      setState(() => arquivo = File(file.path));
-    }
-  }
 
   showPreview(file) async {
     File? arq = await Get.to(() => PreviewPage(file: file));
@@ -38,9 +27,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   emergencyForm(File arquivo) {
-    Navigator.push(context, MaterialPageRoute(
-      builder: (_) => EmergencyFormPage(arquivo: arquivo),
-    ),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => EmergencyFormPage(arquivo: arquivo),
+      ),
     );
   }
 
@@ -58,7 +49,7 @@ class _HomePageState extends State<HomePage> {
                 if (arquivo != null) Anexo(arquivo: arquivo!),
                 ElevatedButton.icon(
                   onPressed: () => Get.to(
-                        () => CameraCamera(onFile: (file) => showPreview(file)),
+                    () => CameraCamera(onFile: (file) => showPreview(file)),
                   ),
                   icon: const Icon(Icons.camera_alt),
                   label: const Padding(
@@ -70,15 +61,6 @@ class _HomePageState extends State<HomePage> {
                       textStyle: const TextStyle(
                         fontSize: 18,
                       )),
-                ),
-                const Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child: Text('ou'),
-                ),
-                OutlinedButton.icon(
-                  icon: const Icon(Icons.attach_file),
-                  label: const Text('Selecione um arquivo'),
-                  onPressed: () => getFileFromGallery(),
                 ),
                 const Padding(padding: EdgeInsets.only(top: 48)),
                 OutlinedButton.icon(
@@ -92,8 +74,7 @@ class _HomePageState extends State<HomePage> {
                       }
                     },
                     icon: const Icon(Icons.send_and_archive),
-                    label: const Text("Enviar")
-                ),
+                    label: const Text("Enviar")),
               ],
             ),
           ],

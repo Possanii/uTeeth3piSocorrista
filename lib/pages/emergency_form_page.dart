@@ -1,22 +1,17 @@
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
 import 'package:uno/uno.dart';
 import 'package:uteeth_socorrista/pages/loading_page.dart';
 
-
-
-
 class EmergencyFormPage extends StatefulWidget {
   File arquivo;
 
-  EmergencyFormPage({Key? key, required this.arquivo}) : super (key: key);
+  EmergencyFormPage({Key? key, required this.arquivo}) : super(key: key);
 
   @override
   _EmergencyFormPageState createState() => _EmergencyFormPageState();
@@ -31,20 +26,17 @@ class _EmergencyFormPageState extends State<EmergencyFormPage> {
   final _formKey = GlobalKey<FormState>();
   late String name;
   late String phone;
-
-
+  late String id;
 
   Future<void> sendFileToFirestore() async {
-
     try {
-        final userCredential =
-        await FirebaseAuth.instance.signInAnonymously();
-        final fcmToken = await FirebaseMessaging.instance.getToken();
+      final userCredential = await FirebaseAuth.instance.signInAnonymously();
+      final fcmToken = await FirebaseMessaging.instance.getToken();
 
+      // FirebaseFunctions functions = FirebaseFunctions.instance;
 
-        // FirebaseFunctions functions = FirebaseFunctions.instance;
-
-      CollectionReference chamado = FirebaseFirestore.instance.collection('Chamados');
+      CollectionReference chamado =
+          FirebaseFirestore.instance.collection('Chamados');
 
       await chamado.add({
         'uidSocorrista': userCredential.user?.uid,
@@ -53,20 +45,17 @@ class _EmergencyFormPageState extends State<EmergencyFormPage> {
         'fcmTokenSocorrista': fcmToken,
         'status': 'open',
         'socorristaAccept': false,
-        'emergencyAcceptBy': {},
       }).then((value) async {
+        id = value.id;
         upload(value.id);
-        uno.post("https://southamerica-east1-uteeth-3pi-puc.cloudfunctions.net/onEmergencyCreated", data: {"data": value.id});
-        // HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('onEmergencyCreated');
-        // final cResponse = await callable.call(
-        // {"data": value.id});
-        const snackBar = SnackBar(
-            content: Text("Chamado criado."));
+        uno.post(
+            "https://southamerica-east1-uteeth-3pi-puc.cloudfunctions.net/onEmergencyCreated",
+            data: {"data": value.id});
+        const snackBar = SnackBar(content: Text("Chamado criado."));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       });
     } on FirebaseException catch (e) {
-      const snackBar = SnackBar(
-          content: Text("Erro ao criar chamado"));
+      const snackBar = SnackBar(content: Text("Erro ao criar chamado"));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       throw Exception("erro ao criar chamado: ${e}");
     }
@@ -105,9 +94,7 @@ class _EmergencyFormPageState extends State<EmergencyFormPage> {
                         }
                         return null;
                       },
-                      decoration: const InputDecoration(
-                          labelText: 'Nome'
-                      ),
+                      decoration: const InputDecoration(labelText: 'Nome'),
                     ),
                   ),
                   Padding(
@@ -120,28 +107,32 @@ class _EmergencyFormPageState extends State<EmergencyFormPage> {
                         }
                         return null;
                       },
-                      decoration: const InputDecoration(
-                        labelText: 'Telefone'
-                      ),
+                      decoration: const InputDecoration(labelText: 'Telefone'),
                     ),
                   ),
-
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          sendFileToFirestore();
                           setState(() {
                             name = nameController.text;
                             phone = telefoneController.text;
                           });
+                          await sendFileToFirestore();
                           telefoneController.text = "";
                           nameController.text = "";
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Chamado Criado!')),
                           );
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => LoadingPage()),);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => LoadingPage(
+                                      id: id,
+                                      name: name,
+                                    )),
+                          );
                         }
                       },
                       child: const Text('Submit'),
@@ -156,4 +147,3 @@ class _EmergencyFormPageState extends State<EmergencyFormPage> {
     );
   }
 }
-
