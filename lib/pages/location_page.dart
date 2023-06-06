@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:uteeth_socorrista/pages/rate_emergency_page.dart';
 
 class LocationPage extends StatefulWidget {
   var id;
@@ -40,7 +41,7 @@ class _LocationPageState extends State<LocationPage> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.active) {
                   if (snapshot.data!.docs.isNotEmpty) {
-                    return Container(
+                    return SizedBox(
                       width: 400,
                       height: 700,
                       child: GoogleMap(
@@ -81,6 +82,18 @@ class _LocationPageState extends State<LocationPage> {
                   return const CircularProgressIndicator();
                 }
               }),
+          ElevatedButton(
+            onPressed: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => RateEmergencyPage(
+                          id: widget.id,
+                        )),
+              ),
+            },
+            child: const Text("Avaliar chamado"),
+          )
         ]),
       )),
     );
