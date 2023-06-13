@@ -27,6 +27,7 @@ class _EmergencyFormPageState extends State<EmergencyFormPage> {
   late String name;
   late String phone;
   late String id;
+  late String path;
 
   Future<void> sendFileToFirestore() async {
     try {
@@ -47,7 +48,8 @@ class _EmergencyFormPageState extends State<EmergencyFormPage> {
         'socorristaAccept': false,
       }).then((value) async {
         id = value.id;
-        upload(value.id);
+        await upload(value.id);
+        chamado.doc(id).update({"uid": id, "photoPath": path});
         uno.post(
             "https://southamerica-east1-uteeth-3pi-puc.cloudfunctions.net/onEmergencyCreated",
             data: {"data": value.id});
@@ -64,7 +66,9 @@ class _EmergencyFormPageState extends State<EmergencyFormPage> {
   Future<void> upload(String id) async {
     try {
       String ref = "${id}/${id}_${DateTime.now().toString()}.jpg";
-      await storage.ref(ref).putFile(widget.arquivo);
+      var photoStorage = await storage.ref(ref).putFile(widget.arquivo);
+
+      await photoStorage.ref.getDownloadURL().then((value) => path = value);
     } on FirebaseException catch (e) {
       throw Exception("erro no upload da imagem: ${e.code}");
     }
