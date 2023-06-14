@@ -9,7 +9,7 @@ import 'package:uno/uno.dart';
 import 'package:uteeth_socorrista/pages/loading_page.dart';
 
 class EmergencyFormPage extends StatefulWidget {
-  File arquivo;
+  List<File> arquivo;
 
   EmergencyFormPage({Key? key, required this.arquivo}) : super(key: key);
 
@@ -28,6 +28,8 @@ class _EmergencyFormPageState extends State<EmergencyFormPage> {
   late String phone;
   late String id;
   late String path;
+  late String path1;
+  late String path2;
 
   Future<void> sendFileToFirestore() async {
     try {
@@ -49,7 +51,12 @@ class _EmergencyFormPageState extends State<EmergencyFormPage> {
       }).then((value) async {
         id = value.id;
         await upload(value.id);
-        chamado.doc(id).update({"uid": id, "photoPath": path});
+        chamado.doc(id).update({
+          "uid": id,
+          "photoPath": path,
+          "photoPath1": path1,
+          "photoPath2": path2
+        });
         uno.post(
             "https://southamerica-east1-uteeth-3pi-puc.cloudfunctions.net/onEmergencyCreated",
             data: {"data": value.id});
@@ -65,10 +72,16 @@ class _EmergencyFormPageState extends State<EmergencyFormPage> {
 
   Future<void> upload(String id) async {
     try {
-      String ref = "${id}/${id}_${DateTime.now().toString()}.jpg";
-      var photoStorage = await storage.ref(ref).putFile(widget.arquivo);
+      String ref = "${id}/${id}_${DateTime.now().toString()}_1.jpg";
+      var photoStorage = await storage.ref(ref).putFile(widget.arquivo[0]);
+      String ref1 = "${id}/${id}_${DateTime.now().toString()}_2.jpg";
+      var photoStorage1 = await storage.ref(ref1).putFile(widget.arquivo[1]);
+      String ref2 = "${id}/${id}_${DateTime.now().toString()}_3.jpg";
+      var photoStorage2 = await storage.ref(ref2).putFile(widget.arquivo[2]);
 
       await photoStorage.ref.getDownloadURL().then((value) => path = value);
+      await photoStorage1.ref.getDownloadURL().then((value) => path1 = value);
+      await photoStorage2.ref.getDownloadURL().then((value) => path2 = value);
     } on FirebaseException catch (e) {
       throw Exception("erro no upload da imagem: ${e.code}");
     }
@@ -82,6 +95,7 @@ class _EmergencyFormPageState extends State<EmergencyFormPage> {
           title: Text('Abrir Emergência'),
         ),
         body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Form(
               key: _formKey,
@@ -114,32 +128,35 @@ class _EmergencyFormPageState extends State<EmergencyFormPage> {
                       decoration: const InputDecoration(labelText: 'Telefone'),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          setState(() {
-                            name = nameController.text;
-                            phone = telefoneController.text;
-                          });
-                          await sendFileToFirestore();
-                          telefoneController.text = "";
-                          nameController.text = "";
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Chamado Criado!')),
-                          );
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => LoadingPage(
-                                      id: id,
-                                      name: name,
-                                    )),
-                          );
-                        }
-                      },
-                      child: const Text('Submit'),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            setState(() {
+                              name = nameController.text;
+                              phone = telefoneController.text;
+                            });
+                            await sendFileToFirestore();
+                            telefoneController.text = "";
+                            nameController.text = "";
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Chamado Criado!')),
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => LoadingPage(
+                                        id: id,
+                                        name: name,
+                                      )),
+                            );
+                          }
+                        },
+                        child: const Text('Criar chamado'),
+                      ),
                     ),
                   ),
                 ],

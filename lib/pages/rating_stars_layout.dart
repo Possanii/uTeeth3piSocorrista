@@ -21,6 +21,10 @@ class _RatingStarsState extends State<RatingStars> {
       await FirebaseFirestore.instance
           .collection("Chamados")
           .doc(widget.id)
+          .update({"status": "Close"});
+      await FirebaseFirestore.instance
+          .collection("Chamados")
+          .doc(widget.id)
           .collection('rate')
           .add({"nota": rating, "comentário": comment, "data": DateTime.now()});
       const snackBar = SnackBar(content: Text("Avaliação concluida."));
