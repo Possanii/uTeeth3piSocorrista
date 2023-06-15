@@ -96,9 +96,7 @@ class _ChamadoHistoricoState extends State<ChamadoHistorico> {
                               uid.contains(doc.data()['uid'])
                                   ? null
                                   : uid.add(doc.data()['uid']);
-                              uidDentista.contains(doc.data()['uidDentista'])
-                                  ? null
-                                  : uidDentista.add(doc.data()['uidDentista']);
+                              uidDentista.add(doc.data()['uidDentista']);
                             });
                             getAllInfoDentista();
                             if (nome.isEmpty)

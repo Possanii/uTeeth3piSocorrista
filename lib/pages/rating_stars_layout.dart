@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
-import 'home_page.dart';
+import 'package:uteeth_socorrista/pages/menu.dart';
 
 class RatingStars extends StatefulWidget {
   var id;
@@ -127,7 +126,7 @@ class _RatingStarsState extends State<RatingStars> {
             await sendRatingToFirestore();
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => HomePage()),
+              MaterialPageRoute(builder: (_) => Menu()),
             );
           },
           style: ElevatedButton.styleFrom(
