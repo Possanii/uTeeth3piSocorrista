@@ -92,7 +92,11 @@ class _EmergencyFormPageState extends State<EmergencyFormPage> {
     return Container(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Abrir Emergência'),
+          title: Text(
+            'Abrir Emergência',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Color.fromRGBO(4, 9, 87, 1),
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -112,7 +116,19 @@ class _EmergencyFormPageState extends State<EmergencyFormPage> {
                         }
                         return null;
                       },
-                      decoration: const InputDecoration(labelText: 'Nome'),
+                      style: TextStyle(color: Colors.black),
+                      decoration: InputDecoration(
+                        labelText: 'Nome',
+                        labelStyle: TextStyle(color: Colors.black),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
                     ),
                   ),
                   Padding(
@@ -125,7 +141,19 @@ class _EmergencyFormPageState extends State<EmergencyFormPage> {
                         }
                         return null;
                       },
-                      decoration: const InputDecoration(labelText: 'Telefone'),
+                      style: TextStyle(color: Colors.black),
+                      decoration: InputDecoration(
+                        labelText: 'Telefone',
+                        labelStyle: TextStyle(color: Colors.black),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
                     ),
                   ),
                   Align(
@@ -133,6 +161,16 @@ class _EmergencyFormPageState extends State<EmergencyFormPage> {
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Color.fromRGBO(4, 9, 87, 1),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 40,
+                            vertical: 16,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
                             setState(() {
@@ -148,14 +186,18 @@ class _EmergencyFormPageState extends State<EmergencyFormPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (_) => LoadingPage(
-                                        id: id,
-                                        name: name,
-                                      )),
+                                builder: (_) => LoadingPage(
+                                  id: id,
+                                  name: name,
+                                ),
+                              ),
                             );
                           }
                         },
-                        child: const Text('Criar chamado'),
+                        child: const Text(
+                          'Criar chamado',
+                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        ),
                       ),
                     ),
                   ),

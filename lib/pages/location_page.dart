@@ -45,11 +45,7 @@ class _LocationPageState extends State<LocationPage> {
   }
 
   _abrirGoogleMaps() async {
-    var latitude = lat.toString();
-    var longitude = lat.toString();
-
-    var url =
-        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+    var url = 'https://www.google.com/maps/search/?api=1&query=$lat,$long';
 
     if (await canLaunch(url)) {
       await launch(url);
@@ -62,100 +58,187 @@ class _LocationPageState extends State<LocationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Localização"),
+        title: Text(
+          "Localização",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Color.fromRGBO(4, 9, 87, 1),
       ),
       body: SafeArea(
-          child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 10,
-        ),
-        child: Column(children: [
-          StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection("Chamados")
-                  .doc(widget.id)
-                  .collection('localização')
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.active) {
-                  if (snapshot.data!.docs.isNotEmpty) {
-                    lat =
-                        double.parse(snapshot.data?.docs[0].data()['latitude']);
-                    long = double.parse(
-                        snapshot.data?.docs[0].data()['longitude']);
-                    return Column(
-                      children: [
-                        SizedBox(
-                          width: 400,
-                          height: 550,
-                          child: GoogleMap(
-                              onMapCreated: _onMapCreated,
-                              initialCameraPosition: CameraPosition(
-                                target: LatLng(lat, long),
-                                zoom: 15.0,
-                              ),
-                              markers: {
-                                Marker(
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 10,
+          ),
+          child: Column(
+            children: [
+              StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection("Chamados")
+                    .doc(widget.id)
+                    .collection('localização')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.active) {
+                    if (snapshot.data!.docs.isNotEmpty) {
+                      lat = double.parse(
+                          snapshot.data?.docs[0].data()['latitude']);
+                      long = double.parse(
+                          snapshot.data?.docs[0].data()['longitude']);
+                      return Column(
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            height: 550,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 3,
+                                  blurRadius: 7,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: GoogleMap(
+                                onMapCreated: _onMapCreated,
+                                initialCameraPosition: CameraPosition(
+                                  target: LatLng(lat, long),
+                                  zoom: 15.0,
+                                ),
+                                markers: {
+                                  Marker(
                                     markerId: const MarkerId('Market'),
-                                    position: LatLng(lat, long))
-                              }),
-                        ),
-                        SizedBox(height: 30),
-                        Row(
+                                    position: LatLng(lat, long),
+                                  ),
+                                },
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 30),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                onPressed: _abrirGoogleMaps,
+                                style: ElevatedButton.styleFrom(
+                                  primary: Color.fromRGBO(4, 9, 87, 1),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 10,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                child: const Text(
+                                  "Abrir Google Maps",
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.white),
+                                ),
+                              ),
+                              SizedBox(width: 20),
+                              ElevatedButton(
+                                onPressed: _fazerChamada,
+                                style: ElevatedButton.styleFrom(
+                                  primary: Color.fromRGBO(4, 9, 87, 1),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 10,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                child: const Text(
+                                  "Fazer Ligação",
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.white),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 30),
+                          ElevatedButton(
+                            onPressed: () => {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => RateEmergencyPage(
+                                    id: widget.id,
+                                  ),
+                                ),
+                              ),
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: Color.fromRGBO(4, 9, 87, 1),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 10,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text(
+                              "Avaliar chamado",
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text(
+                        "Algum erro aconteceu!",
+                        style: TextStyle(fontSize: 16),
+                      );
+                    } else {
+                      return Center(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            ElevatedButton(
-                              onPressed: () => _abrirGoogleMaps(),
-                              child: const Text("Abrir Google Maps"),
+                            Text(
+                              "Aguardando localização.",
+                              style: TextStyle(fontSize: 16),
                             ),
-                            SizedBox(height: 30),
+                            SizedBox(height: 20),
+                            CircularProgressIndicator(),
+                            SizedBox(height: 20),
                             ElevatedButton(
-                              child: Text('Fazer Ligação'),
                               onPressed: _fazerChamada,
+                              style: ElevatedButton.styleFrom(
+                                primary: Color.fromRGBO(4, 9, 87, 1),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 10,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: const Text(
+                                "Fazer Ligação",
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.white),
+                              ),
                             ),
                           ],
                         ),
-                        SizedBox(height: 30),
-                        ElevatedButton(
-                          onPressed: () => {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => RateEmergencyPage(
-                                        id: widget.id,
-                                      )),
-                            ),
-                          },
-                          child: const Text("Avaliar chamado"),
-                        ),
-                      ],
-                    );
-                  } else if (snapshot.hasError) {
-                    return const Text("Algum erro aconteceu!");
+                      );
+                    }
                   } else {
-                    return Center(
-                      child: (Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("Aguardando localização."),
-                          SizedBox(height: 20),
-                          CircularProgressIndicator(),
-                          SizedBox(height: 20),
-                          ElevatedButton(
-                            child: Text('Fazer Ligação'),
-                            onPressed: _fazerChamada,
-                          ),
-                        ],
-                      )),
-                    );
+                    return CircularProgressIndicator();
                   }
-                } else {
-                  return const CircularProgressIndicator();
-                }
-              }),
-        ]),
-      )),
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

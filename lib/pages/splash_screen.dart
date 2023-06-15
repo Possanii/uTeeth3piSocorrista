@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:uteeth_socorrista/pages/home_page.dart';
+import 'package:uteeth_socorrista/pages/menu.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -15,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(
         Duration(seconds: 5),
         () => Navigator.push(
-            context, MaterialPageRoute(builder: (_) => HomePage())));
+            context, MaterialPageRoute(builder: (_) => const Menu())));
   }
 
   @override

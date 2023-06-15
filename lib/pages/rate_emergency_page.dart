@@ -15,7 +15,8 @@ class _RateEmergencyPageState extends State<RateEmergencyPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Avaliação'),
+        title: const Text('Avaliação', style: TextStyle(color: Colors.white)),
+        backgroundColor: Color.fromRGBO(4, 9, 87, 1),
       ),
       body: Center(
         child: Column(

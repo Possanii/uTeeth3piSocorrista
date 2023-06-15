@@ -64,6 +64,7 @@ class _HomePageState extends State<HomePage> {
                         elevation: 0.0,
                         textStyle: const TextStyle(
                           fontSize: 18,
+                          color: Color.fromRGBO(4, 9, 87, 1),
                         )),
                   ),
                 if (arquivo.length < 3 && arquivo.length >= 1)
@@ -79,6 +80,7 @@ class _HomePageState extends State<HomePage> {
                         elevation: 0.0,
                         textStyle: const TextStyle(
                           fontSize: 18,
+                          color: Color.fromRGBO(4, 9, 87, 1),
                         )),
                   ),
                 const Padding(padding: EdgeInsets.only(top: 48)),

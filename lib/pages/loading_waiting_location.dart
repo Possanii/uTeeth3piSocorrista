@@ -24,19 +24,23 @@ class _LoadingWaitingLocationState extends State<LoadingWaitingLocation> {
   Widget build(BuildContext context) {
     goToAccept(widget.id);
 
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(), // Indicador de carregamento circular
-            SizedBox(height: 20), // Espaçamento entre o indicador e o texto
+            CircularProgressIndicator(
+              color: Color.fromRGBO(
+                  4, 9, 87, 1), // Cor do indicador de carregamento
+            ),
+            SizedBox(height: 20),
             Text(
               'Aguardando localização...',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
+                color: Colors.black, // Cor do texto
               ),
             ),
           ],

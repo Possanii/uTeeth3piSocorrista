@@ -39,6 +39,7 @@ class _RatingStarsState extends State<RatingStars> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -53,6 +54,7 @@ class _RatingStarsState extends State<RatingStars> {
                 rating >= 1 ? Icons.star : Icons.star_border,
                 size: 40,
               ),
+              color: Colors.orange,
             ),
             IconButton(
               onPressed: () {
@@ -64,6 +66,7 @@ class _RatingStarsState extends State<RatingStars> {
                 rating >= 2 ? Icons.star : Icons.star_border,
                 size: 40,
               ),
+              color: Colors.orange,
             ),
             IconButton(
               onPressed: () {
@@ -75,6 +78,7 @@ class _RatingStarsState extends State<RatingStars> {
                 rating >= 3 ? Icons.star : Icons.star_border,
                 size: 40,
               ),
+              color: Colors.orange,
             ),
             IconButton(
               onPressed: () {
@@ -86,6 +90,7 @@ class _RatingStarsState extends State<RatingStars> {
                 rating >= 4 ? Icons.star : Icons.star_border,
                 size: 40,
               ),
+              color: Colors.orange,
             ),
             IconButton(
               onPressed: () {
@@ -97,6 +102,7 @@ class _RatingStarsState extends State<RatingStars> {
                 rating >= 5 ? Icons.star : Icons.star_border,
                 size: 40,
               ),
+              color: Colors.orange,
             ),
           ],
         ),
@@ -105,7 +111,9 @@ class _RatingStarsState extends State<RatingStars> {
           padding: EdgeInsets.symmetric(horizontal: 20),
           child: TextField(
             onChanged: (value) {
-              comment = value;
+              setState(() {
+                comment = value;
+              });
             },
             decoration: InputDecoration(
               labelText: 'Comentário (opcional)',
@@ -113,14 +121,21 @@ class _RatingStarsState extends State<RatingStars> {
             ),
           ),
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: 20),
         ElevatedButton(
           onPressed: () async {
             await sendRatingToFirestore();
             Navigator.push(
-                context, MaterialPageRoute(builder: (_) => HomePage()));
+              context,
+              MaterialPageRoute(builder: (_) => HomePage()),
+            );
           },
-          child: const Text('Enviar'),
+          style: ElevatedButton.styleFrom(
+            primary: Color.fromRGBO(4, 9, 87, 1),
+            onPrimary: Colors.white,
+            padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+          ),
+          child: Text('Enviar'),
         ),
       ],
     );
